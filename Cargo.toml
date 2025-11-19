@@ -1,0 +1,10 @@
+[package]
+name = "portex"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+glox = "0.1.5"
+
+[dev-dependencies]
+ggsdk = "0.1.10"
