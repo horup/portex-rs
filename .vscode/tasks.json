@@ -9,6 +9,14 @@
 				"$rustc"
 			],
 			"label": "rust: cargo run"
+		},
+		{
+			"type": "cargo",
+			"command": "publish",
+			"problemMatcher": [
+				"$rustc"
+			],
+			"label": "rust: cargo publish"
 		}
 	]
 }
