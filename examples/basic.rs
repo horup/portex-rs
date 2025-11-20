@@ -1,10 +1,12 @@
 use ggsdk::{GGRunOptions, egui::{Color32, InputState, LayerId, Painter, Stroke, Key}};
-use portex::World;
+use portex::{SectorBuilder, World};
 
 #[derive(Default)]
 struct App {
     pub world: World,
     pub scale:i32,
+    pub sector_builder:SectorBuilder,
+    pub pointer_pos:(i32, i32)
 }
 
 impl App {
@@ -27,6 +29,10 @@ impl App {
         }
         if input.key_pressed(Key::E) {
             self.scale = (self.scale / 2).max(4);
+        }
+
+        if let Some(mut pointer_pos) = input.pointer.latest_pos() {
+            pointer_pos /= self.scale as f32;
         }
     }
 }

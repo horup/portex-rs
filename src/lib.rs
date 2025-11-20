@@ -166,6 +166,7 @@ impl World {
     }
 }
 
+#[derive(Default)]
 pub struct SectorBuilder {
     vertices:Vec<Vertex>
 }
