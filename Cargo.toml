@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+slotmap = "1.0.7"
 
 [dev-dependencies]
 ggsdk = "0.1.10"
