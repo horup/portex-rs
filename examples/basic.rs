@@ -57,7 +57,7 @@ impl App {
         }
         
 
-        if let Some(mut pointer_pos) = input.pointer.latest_pos() {
+        if let Some(pointer_pos) = input.pointer.latest_pos() {
             self.pointer_screen = pointer_pos;
             self.pointer_world = self.screen_to_world(pointer_pos);
         }
@@ -120,8 +120,8 @@ impl App {
 }
 
 impl ggsdk::GGApp for App {
-    fn init(&mut self, g: ggsdk::InitContext) {
-        self.scale = 1;
+    fn init(&mut self, _: ggsdk::InitContext) {
+        self.scale = 32;
     }
 
     fn update(&mut self, g: ggsdk::UpdateContext) {
