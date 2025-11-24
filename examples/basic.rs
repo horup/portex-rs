@@ -19,10 +19,18 @@ impl App {
         let color = Color32::DARK_GRAY;
         let w = painter.clip_rect().width() as i32;
         let h = painter.clip_rect().height() as i32;
-        for y in (0..h).step_by(self.scale as usize) {
+        
+        // Calculate grid starting positions based on offset
+        let start_x = (self.offset.0 % self.scale + self.scale) % self.scale;
+        let start_y = (self.offset.1 % self.scale + self.scale) % self.scale;
+        
+        // Draw horizontal lines
+        for y in (start_y..h).step_by(self.scale as usize) {
             painter.line_segment([(0.0, y as f32).into(), (w as f32, y as f32).into()], Stroke::new(1.0, color));
         }
-        for x in (0..w).step_by(self.scale as usize) {
+        
+        // Draw vertical lines
+        for x in (start_x..w).step_by(self.scale as usize) {
             painter.line_segment([(x as f32, 0.0).into(), (x as f32, h as f32).into()], Stroke::new(1.0, color));
         }
     }
@@ -99,8 +107,8 @@ impl App {
     }
 
     pub fn screen_to_world(&self, screen_pos:Pos2) -> (i32, i32) {
-        let x = (screen_pos.x as i32 - self.offset.0) / self.scale;
-        let y = (screen_pos.y as i32 - self.offset.1) / self.scale;
+        let x = ((screen_pos.x - self.offset.0 as f32) / self.scale as f32).round() as i32;
+        let y = ((screen_pos.y - self.offset.1 as f32) / self.scale as f32).round() as i32;
         (x, y)
     }
 
