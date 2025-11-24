@@ -77,6 +77,15 @@ impl From<(i32, i32)> for Vertex {
 }
 
 impl World {
+    pub fn sectors_iter(&self) -> impl Iterator<Item = (SectorID, &Sector)> {
+        self.sectors.iter()
+    }
+    pub fn vertices_iter(&self) -> impl Iterator<Item = (VertexID, &Vertex)> {
+        self.vertices.iter()
+    }
+    pub fn lines_iter(&self) -> impl Iterator<Item = (LineID, &Line)> {
+        self.lines.iter()
+    }
     pub fn new_vertex(&mut self, vertex: Vertex) -> VertexID {
         self.vertices.insert(vertex)
     }
@@ -167,23 +176,27 @@ impl World {
 }
 
 #[derive(Default)]
-pub struct SectorBuilder {
-    vertices:Vec<Vertex>
+pub struct LinesBuilder {
+    pub vertices:Vec<Vertex>
 }
 
-impl SectorBuilder {
+impl LinesBuilder {
     pub fn new() -> Self {
         Self {
             vertices: Vec::new()
         }
     }
 
-    pub fn add_vertex(&mut self, x: i32, y: i32) -> &mut Self {
+    pub fn push_vertex(&mut self, x: i32, y: i32) -> &mut Self {
         self.vertices.push(Vertex { x, y });
         self
     }
 
-    pub fn build(self, world: &mut World) -> SectorID {
+    pub fn pop_vertex(&mut self) -> Option<Vertex> {
+        self.vertices.pop()
+    }   
+
+    pub fn build(self, world: &mut World) {
         // Add vertices to world
         let vertex_ids: Vec<VertexID> = self.vertices
             .into_iter()
@@ -197,8 +210,5 @@ impl SectorBuilder {
             let line_id = world.new_line(vertex_ids[i], vertex_ids[next_i]);
             line_ids.push(line_id);
         }
-
-        // Create and return sector
-        world.new_sector(line_ids)
     }
 }
