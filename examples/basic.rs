@@ -1,4 +1,4 @@
-use ggsdk::{GGRunOptions, egui::{Color32, InputState, LayerId, Painter, Stroke, Key}};
+use ggsdk::{GGRunOptions, egui::{Align2, Color32, FontId, InputState, Key, LayerId, Painter, Pos2, Stroke}};
 use portex::{SectorBuilder, World};
 
 #[derive(Default)]
@@ -6,7 +6,9 @@ struct App {
     pub world: World,
     pub scale:i32,
     pub sector_builder:SectorBuilder,
-    pub pointer_pos:(i32, i32)
+    pub pointer_world:(i32, i32),
+    pub pointer_screen:Pos2,
+    pub offset:(i32, i32),
 }
 
 impl App {
@@ -27,19 +29,53 @@ impl App {
         if input.key_pressed(Key::Q) {
             self.scale = (self.scale * 2).min(128);
         }
+        let offset_speed = 16.0;
         if input.key_pressed(Key::E) {
             self.scale = (self.scale / 2).max(4);
         }
+        if input.key_pressed(Key::W) {
+            self.offset.1 += offset_speed as i32;
+        }
+        if input.key_pressed(Key::S) {
+            self.offset.1 -= offset_speed as i32;
+        }
+        if input.key_pressed(Key::A) {
+            self.offset.0 += offset_speed as i32;
+        }
+        if input.key_pressed(Key::D) {
+            self.offset.0 -= offset_speed as i32;
+        }
+        
 
         if let Some(mut pointer_pos) = input.pointer.latest_pos() {
-            pointer_pos /= self.scale as f32;
+            self.pointer_screen = pointer_pos;
+            self.pointer_world = self.screen_to_world(pointer_pos);
         }
+    }
+
+    pub fn draw_ui(&mut self, painter:&Painter) {
+        let p = self.pointer_world;
+        painter.text(Pos2::new(16.0, 16.0), Align2::LEFT_CENTER, format!("Pointer: {}, {}", p.0, p.1), FontId::default(), Color32::WHITE);
+        painter.text(Pos2::new(16.0, 32.0), Align2::LEFT_CENTER, format!("Offset: {}, {}", self.offset.0, self.offset.1), FontId::default(), Color32::WHITE);
+
+    }
+
+    pub fn screen_to_world(&self, screen_pos:Pos2) -> (i32, i32) {
+        let x = (screen_pos.x as i32 - self.offset.0) / self.scale;
+        let y = (screen_pos.y as i32 - self.offset.1) / self.scale;
+        (x, y)
+    }
+
+    pub fn world_to_screen(&self, world_pos:(i32, i32)) -> Pos2 {
+        let x = (world_pos.0 * self.scale) + self.offset.0;
+        let y = (world_pos.1 * self.scale) + self.offset.1;
+        Pos2::new(x as f32, y as f32)
     }
 }
 
 impl ggsdk::GGApp for App {
     fn init(&mut self, g: ggsdk::InitContext) {
-        self.scale = 16;
+        self.scale = 1;
     }
 
     fn update(&mut self, g: ggsdk::UpdateContext) {
@@ -48,7 +84,7 @@ impl ggsdk::GGApp for App {
         });
 
         let painter = g.egui_ctx.layer_painter(LayerId::background());
-        self.draw_grid(&painter);
+        self.draw_ui(&painter);
     }
 }
 

@@ -202,9 +202,3 @@ impl SectorBuilder {
         world.new_sector(line_ids)
     }
 }
-
-impl Default for SectorBuilder {
-    fn default() -> Self {
-        Self::new()
-    }
-}
