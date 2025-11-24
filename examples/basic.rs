@@ -122,6 +122,7 @@ impl ggsdk::GGApp for App {
         });
 
         let painter = g.egui_ctx.layer_painter(LayerId::background());
+        self.draw_grid(&painter);
         self.draw_lines(&painter);
         self.draw_line_builder(&painter);
         self.draw_ui(&painter);
